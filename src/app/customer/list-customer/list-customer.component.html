@@ -1,0 +1,23 @@
+<div *ngIf="resultLength" >
+  <h2>The list of customers</h2>
+  <!-- <table border="solid" > -->
+      <ul *ngFor="let cust of customerList" >
+          <!-- <tr><td> -->
+              <li >{{cust.CUSTCODE}} - {{cust.CUSTNAME}} <button type="button" class="btn btn-primary" (click)=routeUpdate(cust._id)>
+                    <span class="glyphicon glyphicon-edit"></span>
+                    </button>    
+                  <button type="button" class="btn btn-danger" (click)=delete(cust._id)>
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                  </li>
+          <!-- </td><td> -->
+              
+          <!-- </td></tr> -->
+        </ul>
+  <!-- </table> -->
+  <!-- <ngb-pagination [collectionSize]="resultLength"  aria-label="Default pagination"></ngb-pagination> -->
+  <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+  </div>
+  <div *ngIf="!resultLength" >
+  <h2>To find the products search using above search box</h2>
+  </div>

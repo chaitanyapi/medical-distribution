@@ -1,0 +1,167 @@
+<div>
+  <div class="container"  style="background-color:green" *ngIf="!hidden">
+    <div class="row">
+        <h2>Product Entry</h2><h5 *ngIf="!prodform.valid" style="color:red">Fields in red border are mandatory</h5>
+          <form #prodform="ngForm" (ngSubmit)="onSubmit(prodform.value)" class="well">
+              <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Company Name</label>
+                                    <input #searchCompany (keyup)="onKeyup(searchCompany.value)" type="text" 
+                                    [ngbTypeahead]="searchTxt" [resultFormatter]="formatter" class="form-control"  
+                                    (selectItem)="companyDetail($event)" required name="COMPANYNAME" ngModel>
+                                    
+                            </div>
+                      </div>
+                  <div class="col-sm-6">
+                        <div  class="form-group">
+                                <label>Company Code</label>
+                                <input type="text" class="form-control" disabled value={{COMPANYCODE}} name="COMPANYCODE" ngModel>
+                            </div>
+                  </div>
+              </div>
+
+              <div class="row">
+
+                <div class="col-sm-6">
+                        <div  class="form-group">
+                                <label>PRODUCT NAME</label>
+                                <input type="text" class="form-control" required name="PRODUCTNAME" ngModel>
+                            </div>
+                </div>
+              </div>
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Product Picture</label>
+                                    <input type="file" #fieldRef class="form-control"   name="PRODPIC" ngModel (change)="changeListener()">
+                            </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>PRODUCT PACK</label>
+                                    <input type="text" class="form-control" required name="PRODPACK" ngModel>
+                                </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CQTY</label>
+                                    <input type="number" class="form-control"  required name="CQTY" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>BPAK</label>
+                                    <input type="text" class="form-control" required name="BPAK" ngModel>
+                                </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>TAX</label>
+                                    <input type="number" class="form-control" required name="TAX" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Special Rate</label>
+                                    <input type="number" class="form-control"  name="SRATE" ngModel>
+                                </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>RATE</label>
+                                    <input type="number" class="form-control" required  name="RATE" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Purchase Rate</label>
+                                    <input type="number" class="form-control" required name="PRATE" ngModel>
+                                </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>MRP</label>
+                                    <input type="number" class="form-control" required name="MRP" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Offer Price</label>
+                                    <input type="number" class="form-control"  name="OFPN" ngModel>
+                                </div>
+                    </div>
+            </div>
+                <div  class="form-group">
+                    <label>Product entry date should be taken sys date</label>
+                    <input type="date" class="form-control"  name="PEDT" ngModel>
+                </div>
+              <button [disabled]="!prodform.valid" type="submit" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+          </form>
+    </div>
+  </div>
+    
+    <div >
+      <br>
+      <button *ngIf="hidden" type="button" class="btn btn-success" (click)="onClick()"><span class="glyphicon glyphicon-plus-sign"></span> Add Product </button>
+      <br>
+    </div>
+    <div>
+
+      <br>
+      <div *ngIf="hidden" class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                <label for="typeahead-format">Search By</label>
+            </div>
+            <div class="col-sm-3">
+                <input id="typeahead-format" #status type="text" class="form-control" [(ngModel)]="searchBy" [ngbTypeahead]="search" [resultFormatter]="formatter" />
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-sm-2">
+                <label >Search Text</label>
+            </div>
+            <div class="col-sm-3">
+                <input *ngIf="searchBy"  type="text" class="form-control" placeholder="Start typing here..." #search  (keyup)="fetchData(search.value, searchBy)">
+            </div>
+        </div>
+
+      </div>
+
+      <br>
+    </div>
+    <div *ngIf="hidden" class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                <list-products (prodInfo)=getProduct($event) [resultLength]="resultLength" [productList]="products"></list-products>
+            </div>
+            <div class="col-sm-3">
+                <show-picture *ngIf="showPicture"  [picture]="productInfo" [image]="img"></show-picture>
+            </div>
+          </div>
+    </div>
+</div>
+
+

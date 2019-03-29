@@ -1,0 +1,166 @@
+<div >
+  <div class="container" *ngIf="!hidden">
+    <div class="row">
+        <h2>Customer details</h2><h5 *ngIf="!custform.valid" style="color:red" >Fields in red border are mandatory</h5>
+      <!-- <div class="col-sm-4"> -->
+          <form #custform="ngForm" (ngSubmit)="onSubmit(custform.value)" class="well">
+              <!-- <div  class="form-group"> -->
+                  <!-- <label>Product Picture</label> -->
+                  <!-- <input type="file" #fieldRef class="form-control"   name="prodpic" ngModel (change)="changeListener()"> -->
+              <!-- </div> -->
+              <!-- <div  class="form-group">
+                <label>CUSTOMER CODE</label>
+                <input type="text" class="form-control"   name="CUSTCODE" ngModel>
+            </div> -->
+
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CUSTOMER NAME</label>
+                                    <input type="text" class="form-control" required name="CUSTNAME" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CUSTOMER ADDRESS</label>
+                                    <input type="textarea" class="form-control" required name="CUSTADD" ngModel>
+                                </div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CONTACT 1</label>
+                                    <input type="number" class="form-control" required  name="CUSTCONT1" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CONTACT 2</label>
+                                    <input type="number" class="form-control"  name="CUSTCONT2" ngModel>
+                                </div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-4">
+                            <div  class="form-group">
+                                    <label>APGSTNO</label>
+                                    <input type="text" class="form-control" required name="APGSTNO" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-4">
+                            <div  class="form-group">
+                                    <label>GST</label>
+                                    <input type="text" class="form-control"  required name="GST" ngModel>
+                                </div>
+                    </div>
+                    <div class="col-sm-4">
+                            <div  class="form-group">
+                                    <label>CITY</label>
+                                    <input type="text" class="form-control"  required name="CITY" ngModel>
+                                </div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>LedgerFolio Number</label>
+                                    <input type="text" class="form-control"  name="LFNO" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>District</label>
+                                    <input type="text" class="form-control"  required name="DIST" ngModel>
+                                </div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>REP</label>
+                                    <input type="text" class="form-control" required name="REP" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>Route Name</label>
+                                    <input type="text" class="form-control" required name="RTNAME" ngModel>
+                                </div>
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>CARRIER / Transporter</label>
+                                    <input type="text" class="form-control"  name="CARRIER" ngModel>
+                                </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                    <label>STATION(Nearest place where the product is dispatched)</label>
+                                    <input type="text" class="form-control"  name="STATION" ngModel>
+                                </div>
+                    </div>
+            </div>
+
+            <button [disabled]="!custform.valid" type="submit" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+          </form>
+        <!-- <enter-product  (emitHidden)=changeHidden($event)  ></enter-product> -->
+      <!-- </div> -->
+    </div>
+  </div>
+    
+    <div >
+      <br>
+      <button *ngIf="hidden" type="button" class="btn btn-success" (click)="onClick()"><span class="glyphicon glyphicon-plus-sign"></span> Add Customer </button>
+      <br>
+    </div>
+    <div>
+
+      <br>
+      <div *ngIf="hidden" class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                <label for="typeahead-format">Search By</label>
+            </div>
+            <div class="col-sm-3">
+                <input id="typeahead-format" #status type="text" class="form-control" [(ngModel)]="searchBy" [ngbTypeahead]="search" 
+                placeholder="Start typing c" [resultFormatter]="formatter" />
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-sm-2">
+                <label >Search Text</label>
+            </div>
+            <div class="col-sm-3">
+                <input *ngIf="searchBy"  type="text" class="form-control" placeholder="Start typing here..." #search  (keyup)="fetchData(search.value, searchBy)">
+            </div>
+        </div>
+
+      </div>
+
+      <br>
+    </div>
+    <div *ngIf="hidden" class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                <list-customer (custInfo)=getCustomer($event) [resultLength]="resultLength" [customerList]="customers"></list-customer>
+            </div>
+            <!-- <div class="col-sm-3">
+                <show-picture *ngIf="showPicture"  [picture]="productInfo" [image]="img"></show-picture>
+            </div> -->
+          </div>
+    </div>
+</div>
+
+

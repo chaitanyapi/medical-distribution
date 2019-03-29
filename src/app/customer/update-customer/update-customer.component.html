@@ -1,0 +1,108 @@
+<div >
+    <div class="container" *ngIf="!hidden">
+      <div class="row">
+          <h2>Update Customer details</h2>
+        <!-- <div class="col-sm-4"> -->
+            <form #custform="ngForm" (ngSubmit)="onSubmit(custform.value)" class="well">
+  
+              <div class="row">
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>CUSTOMER NAME</label>
+                                      <input type="text" class="form-control"  name="CUSTNAME" required [(ngModel)]="custname">
+                                  </div>
+  
+                      </div>
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>CUSTOMER ADDRESS</label>
+                                      <input type="textarea" class="form-control"  name="CUSTADD" required  [(ngModel)]="custadd">
+                                  </div>
+                      </div>
+              </div>
+              <div class="row">
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>CONTACT 1</label>
+                                      <input type="number" class="form-control"   name="CUSTCONT1"  required [(ngModel)]="custcontact1">
+                                  </div>
+  
+                      </div>
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>CONTACT 2</label>
+                                      <input type="number" class="form-control"  name="CUSTCONT2" [(ngModel)]="custcontact2">
+                                  </div>
+                      </div>
+              </div>
+              <div class="row">
+                        <div class="col-sm-4">
+                                <div  class="form-group">
+                                                <label>APGSTNO</label>
+                                                <input type="text" class="form-control" required name="APGSTNO" ngModel>
+                                            </div>
+            
+                                </div>
+                                <div class="col-sm-4">
+                                        <div  class="form-group">
+                                                <label>GST</label>
+                                                <input type="text" class="form-control"  required name="GST" ngModel>
+                                            </div>
+                                </div>
+                                <div class="col-sm-4">
+                                        <div  class="form-group">
+                                                <label>CITY</label>
+                                                <input type="text" class="form-control"  required name="CITY" ngModel>
+                                            </div>
+                                </div>
+              </div>
+              <div class="row">
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>LedgerFolio Number</label>
+                                      <input type="text" class="form-control"  name="LFNO" [(ngModel)]="lfno">
+                                  </div>
+  
+                      </div>
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>District</label>
+                                      <input type="text" class="form-control"  required   name="DIST" [(ngModel)]="dist">
+                                  </div>
+                      </div>
+              </div>
+              <div class="row">
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>REP</label>
+                                      <input type="text" class="form-control"  required  name="REP" [(ngModel)]="rep">
+                                  </div>
+  
+                      </div>
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>Route Name</label>
+                                      <input type="text" class="form-control" required   name="RTNAME" [(ngModel)]="rtname">
+                                  </div>
+                      </div>
+              </div>
+              <div class="row">
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>CARRIER / Transporter</label>
+                                      <input type="text" class="form-control"  required  name="CARRIER" [(ngModel)]="carrier">
+                                  </div>
+  
+                      </div>
+                      <div class="col-sm-6">
+                              <div  class="form-group">
+                                      <label>STATION(Nearest place where the product is dispatched)</label>
+                                      <input type="text" class="form-control"  required  name="STATION" [(ngModel)]="station">
+                                  </div>
+                      </div>
+              </div>
+  
+              <button type="submit" class="btn btn-success">Update</button>
+              <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+            </form>
+  

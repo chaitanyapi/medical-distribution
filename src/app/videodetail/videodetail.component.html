@@ -1,0 +1,18 @@
+<div>
+  <div>
+    <iframe [src]="video.url | safe" width="100%" height="300"></iframe>
+  </div>
+    <form #form="ngForm">
+      <div class="form-group">
+        <input type="input" class="form-control" name="title" required placeholder="title" [(ngModel)]="video.title">
+      </div>
+      <div class="form-group">
+          <input type="input" class="form-control" name="url" required placeholder="url" [(ngModel)]="video.url">
+      </div>
+      <div class="form-group">
+          <textarea type="input" class="form-control" rows="5" name="description" [(ngModel)]="video.description">
+          </textarea>
+      </div>
+      <button  type="button" class="btn btn-success" (click)="updateVideo()">Update</button>
+    </form>
+  </div>

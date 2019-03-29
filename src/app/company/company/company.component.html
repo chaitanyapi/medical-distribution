@@ -1,0 +1,184 @@
+<div >
+    <div class="container" *ngIf="!hidden">
+      <div class="row">
+          <h2>Company details</h2><h5 *ngIf="!custform.valid" style="color:red">All fields with red border are mandatory</h5>
+        <!-- <div class="col-sm-4"> -->
+
+            <form #custform="ngForm" (ngSubmit)="onSubmit(custform.value)" class="well">
+                <!-- <div  class="form-group"> -->
+                    <!-- <label>Product Picture</label> -->
+                    <!-- <input type="file" #fieldRef class="form-control"   name="prodpic" ngModel (change)="changeListener()"> -->
+                <!-- </div> -->
+                <!-- <div  class="form-group">
+                  <label>CUSTOMER CODE</label>
+                  <input type="text" class="form-control"   name="CUSTCODE" ngModel>
+              </div> -->
+              <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Company Type</label>
+                        <!-- <input type="text" class="form-control"  name="COMPANYTYPE" ngModel> -->
+                        <select required class="form-control" #companyType name="COMPANYTYPE" ngModel (change)=onChange(companyType.value) >
+                            <option value="Pharma" >Pharma</option>
+                            <option value="Automobile" >Automobile</option>
+                            <option value="Banking">Banking</option>
+                        </select>
+                    </div>
+          
+                  </div>
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" class="form-control"  name="COMPANYNAME" required ngModel>
+                    </div>
+                  </div>
+          </div>
+          <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Company Address</label>
+                        <input type="text" class="form-control"  name="COMPANYADD" required ngModel>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Company Phone</label>
+                        <input type="number" class="form-control"  name="COMPANYPHONE" required ngModel>
+                    </div>
+                  </div>
+          </div>
+          <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Primary Contact Name</label>
+                        <input type="text" class="form-control"  name="PRIMARYCONTACTNAME" required ngModel>
+                    </div>
+          
+                  </div>
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Primary Conatact Number</label>
+                        <input type="number" class="form-control"  name="PRIMARYCONTACTNUMBER" required ngModel>
+                    </div>
+                  </div>
+          </div>
+          <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Secondary Contact Name</label>
+                        <input type="text" class="form-control"  name="SECONDARYCONTACTNAME" ngModel>
+                    </div>
+          
+                  </div>
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Secondary Contact Number</label>
+                        <input type="number" class="form-control"  name="SECONDARYCONTACTNUMBER" ngModel>
+                    </div>
+                  </div>
+          </div>
+          <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Accountant Contact Name</label>
+                        <input type="text" class="form-control"  name="ACCOUNTANTCONTACTNAME" ngModel>
+                    </div>
+          
+                  </div>
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Accountant Contact Number</label>
+                        <input type="number" class="form-control"  name="ACCOUNTANTCONTACTNUMBER" ngModel>
+                    </div>
+                  </div>
+          </div>
+          <div class="row">
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>GST Number</label>
+                        <input type="text" class="form-control"  name="GSTNO" required ngModel>
+                    </div>
+          
+                  </div>
+                  <div class="col-sm-6">
+                        <div  class="form-group">
+                            <label>LFNO</label>
+                            <input type="text" class="form-control"  name="LFNO" ngModel>
+                        </div>
+                      </div>
+
+          </div>
+          <div class="row" *ngIf="showDl"  >
+                  <div class="col-sm-6">
+                    <div  class="form-group">
+                        <label>Company DL 1</label>
+                        <input type="text" class="form-control" required name="COMPDLNO1" ngModel>
+                    </div>
+                  </div>
+                    <div class="col-sm-6">
+                            <div  class="form-group">
+                                <label>Company DL 2</label>
+                                <input type="text" class="form-control" required name="COMPDLNO2" ngModel>
+                          </div>
+                  </div>
+          </div>
+
+  
+              <button [disabled]="!custform.valid" type="submit" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+            </form>
+          <!-- <enter-product  (emitHidden)=changeHidden($event)  ></enter-product> -->
+        <!-- </div> -->
+      </div>
+    </div>
+      
+      <div >
+        <br>
+        <button *ngIf="hidden" type="button" class="btn btn-success" (click)="onClick()"><span class="glyphicon glyphicon-plus-sign"></span> Add Company </button>
+        <br>
+      </div>
+      <div>
+  
+        <br>
+        <div *ngIf="hidden" class="container">
+          <div class="row">
+              <div class="col-sm-2">
+                  <label for="typeahead-format">Search By</label>
+              </div>
+              <div class="col-sm-3">
+                  <input id="typeahead-format" #status type="text" class="form-control" [(ngModel)]="searchBy" [ngbTypeahead]="search" 
+                  placeholder="Start typing c" [resultFormatter]="formatter" />
+              </div>
+          </div>
+          <br>
+          <br>
+          <div class="row">
+              <div class="col-sm-2">
+                  <label >Search Text</label>
+              </div>
+              <div class="col-sm-3">
+                  <input *ngIf="searchBy"  type="text" class="form-control" placeholder="Start typing here..." #search  (keyup)="fetchData(search.value, searchBy)">
+              </div>
+          </div>
+  
+        </div>
+  
+        <br>
+      </div>
+      <div *ngIf="hidden" class="container">
+          <div class="row">
+              <!-- <div class="col-sm-9">
+                  <list-supply (custInfo)=getCustomer($event) [resultLength]="resultLength" [customerList]="companies"></list-supply>
+              </div> -->
+              <div class="col-sm-9">
+                  <list-company  [resultLength]="resultLength" [companyList]="companies"></list-company>
+              </div>
+              <!-- <div class="col-sm-3">
+                  <show-picture *ngIf="showPicture"  [picture]="productInfo" [image]="img"></show-picture>
+              </div> -->
+            </div>
+      </div>
+  </div>
+  
+  
+  

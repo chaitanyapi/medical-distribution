@@ -1,0 +1,73 @@
+<nav class="navbar" style="border-radius:0" >
+    <div class="container-fluid ">
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" (click)="toggleState()">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand">
+            <img src="../../assets/images/GT.png" width="150" height="50" > </a>
+      </div>
+
+      <div class="collapse navbar-collapse in" [ngClass]="{ 'in': isIn }"> 
+        
+        <ul class="nav navbar-nav navbar-left" >
+          <li #company value="company" (mouseover)="companyEvent()" (mouseout)="companyEvent()" [@myAwesomeAnimation]='companystate'
+            *ngIf="servicesService.loggedin()"><a routerLink="/company" >
+              <img src="../../assets/images/s.png" width="40" height="40"></a></li>
+
+          <li #product value="product" (mouseover)="productEvent()" (mouseout)="productEvent()" [@myAwesomeAnimation]='productstate'
+            *ngIf="servicesService.loggedin()"><a routerLink="/products" >
+              <img src="../../assets/images/p.png" width="40" height="40"></a></li>
+
+          <li #customer value="customer" (mouseover)="customerEvent()" (mouseout)="customerEvent()" [@myAwesomeAnimation]='customerstate'
+            *ngIf="servicesService.loggedin()"><a routerLink="/customers" >
+              <img src="../../assets/images/c.png" width="40" height="40"></a></li>
+          <li #pi value="pi" (mouseover)="piEvent()" (mouseout)="piEvent()" [@myAwesomeAnimation]='pistate'
+          *ngIf="servicesService.loggedin()"><a routerLink="/purchaseinvoice">
+            <img src="../../assets/images/pi.png" width="40" height="40"></a></li>
+
+          <!-- <li #home value="home" (mouseover)="homeEvent()" (mouseout)="homeEvent()" [@myAwesomeAnimation]='homestate'
+          *ngIf="servicesService.loggedin()"><a routerLink="/home" routerLinkActive="active" > 
+            <img src="../../assets/images/c.png" width="40" height="40"></a></li>
+          <li #video value="video" (mouseover)="videoEvent()" (mouseout)="videoEvent()" [@myAwesomeAnimation]='videostate'
+          *ngIf="servicesService.loggedin()"><a routerLink="/videos" routerLinkActive="active">video</a></li>
+          <li #dashboard value="dashboard" (mouseover)="dashboardEvent()" (mouseout)="dashboardEvent()" [@myAwesomeAnimation]='dashboardstate'
+          *ngIf="servicesService.loggedin()" ><a routerLink="/dashboard" (click)=seeDashboard()> Dashboard </a></li>
+          <li #heroes value="heroes" (mouseover)="heroesEvent()" (mouseout)="heroesEvent()" [@myAwesomeAnimation]='heroesstate'
+          *ngIf="servicesService.loggedin()"><a routerLink="/heroes" >Heroes</a></li> -->
+          
+          <!-- <li *ngIf="servicesService.loggedin()" ngbDropdown class="d-inline-block">
+              <a  class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle >
+                Entry Forms
+                <span class="caret"></span>
+              </a>
+              <ul ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <li><a routerLink="/company">Company</a></li>
+                <li><a routerLink="/products">Product</a></li>
+                <li><a routerLink="/customers">Customer</a></li>
+              </ul>
+          </li> -->
+        </ul>
+          <ul class="nav navbar-nav navbar-right" style="color:antiquewhite">
+            <li #login value="login" (mouseover)="loginEvent()" (mouseout)="loginEvent()" [@myAwesomeAnimation]='loginstate'
+            *ngIf="!servicesService.loggedin()">
+              <a routerLink="/login">Login</a>
+            </li>
+            <li #register value="register" (mouseover)="registerEvent()" (mouseout)="registerEvent()" [@myAwesomeAnimation]='registerstate'
+            *ngIf="!servicesService.loggedin()" >
+              <a  routerLink="/register">Register</a>
+            </li>
+            <li #logout value="logout" (mouseover)="logoutEvent()" (mouseout)="logoutEvent()" [@myAwesomeAnimation]='logoutstate'
+            *ngIf="servicesService.loggedin()" >
+                <a href="#" (click)=onLogout()>Logout</a>
+            </li>
+
+          </ul>
+      </div>
+    </div>
+  </nav>
+
+

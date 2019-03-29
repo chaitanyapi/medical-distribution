@@ -1,0 +1,25 @@
+<html>
+    <head>
+    <title>{{title}}</title>
+    </head>
+    <body>
+    <div class="container-fluid">
+      <h2>My Heroes</h2>
+      <ul class="heroes">
+          <li *ngFor="let hero of heroes" (mouseover)="onSelect(hero)" >
+              <span class="badge">{{hero.id}}</span> {{hero.name}}
+        </li>
+      </ul>
+    
+    
+      <div class="row">
+          <div class="col-lg-6">
+              <app-showhero (childEmit)="value=$event" [tempo]="selectedHero" [show]="value" ></app-showhero>
+          </div>
+          <div class="col-lg-6">
+              <hero-detail [show]="value" [tempo]="selectedHero" ></hero-detail>
+          </div>
+      </div> 
+    </div>  
+    </body>
+    </html>

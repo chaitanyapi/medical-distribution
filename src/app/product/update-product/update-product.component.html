@@ -1,0 +1,123 @@
+<div class="container"  style="background-color:green" *ngIf="!hidden">
+    <div class="row">
+        <h2>Product Entry</h2>
+      <!-- <div class="col-sm-4"> -->
+                <form #prodform="ngForm" (ngSubmit)="onSubmit(prodform.value)" class="well">
+                                <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>Company Name</label>
+                                                      <input #searchCompany (keyup)="onKeyup(searchCompany.value)" type="text" 
+                                                      [ngbTypeahead]="searchTxt" [resultFormatter]="formatter" class="form-control"  
+                                                      (change)="productDetail(searchCompany.value)" required name="COMPANYNAME" [(ngModel)]=COMPANYNAME>
+                                                      
+                                              </div>
+                                        </div>
+                                    <div class="col-sm-6">
+                                          <div  class="form-group">
+                                                  <label>Company Code</label>
+                                                  <input type="text" class="form-control" disabled value={{COMPANYCODE}} name="COMPANYCODE" [(ngModel)]=COMPANYCODE>
+                                              </div>
+                                    </div>
+                                </div>
+                  
+                                <div class="row">
+                  
+                                  <div class="col-sm-6">
+                                          <div  class="form-group">
+                                                  <label>PRODUCT NAME</label>
+                                                  <input type="text" class="form-control" required name="PRODUCTNAME" [(ngModel)]=PRODUCTNAME>
+                                              </div>
+                                  </div>
+                                </div>
+                  
+                              <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>Product Picture</label>
+                                                      <input type="file" #fieldRef class="form-control"   name="PRODPIC" [(ngModel)]=PRODPIC (change)="changeListener()">
+                                              </div>
+                  
+                                      </div>
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>PRODUCT PACK</label>
+                                                      <input type="text" class="form-control" required name="PRODPACK" [(ngModel)]=PRODPACK>
+                                                  </div>
+                                      </div>
+                              </div>
+                  
+                              <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>CQTY</label>
+                                                      <input type="number" class="form-control"  required name="CQTY" [(ngModel)]=CQTY>
+                                                  </div>
+                  
+                                      </div>
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>BPAK</label>
+                                                      <input type="text" class="form-control" required name="BPAK" [(ngModel)]=BPAK>
+                                                  </div>
+                                      </div>
+                              </div>
+                  
+                              <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>TAX</label>
+                                                      <input type="number" class="form-control" required name="TAX" [(ngModel)]=TAX>
+                                                  </div>
+                  
+                                      </div>
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>Special Rate</label>
+                                                      <input type="number" class="form-control"  name="SRATE" [(ngModel)]=SRATE>
+                                                  </div>
+                                      </div>
+                              </div>
+                  
+                              <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>RATE</label>
+                                                      <input type="number" class="form-control" required  name="RATE" [(ngModel)]=RATE>
+                                                  </div>
+                  
+                                      </div>
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>Purchase Rate</label>
+                                                      <input type="number" class="form-control" required name="PRATE" [(ngModel)]=PRATE>
+                                                  </div>
+                                      </div>
+                              </div>
+                  
+                              <div class="row">
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>MRP</label>
+                                                      <input type="number" class="form-control" required name="MRP" [(ngModel)]=MRP>
+                                                  </div>
+                  
+                                      </div>
+                                      <div class="col-sm-6">
+                                              <div  class="form-group">
+                                                      <label>Offer Price</label>
+                                                      <input type="number" class="form-control"  name="OFPN" [(ngModel)]=OFPN>
+                                                  </div>
+                                      </div>
+                              </div>
+                                  <div  class="form-group">
+                                      <label>Product entry date should be taken sys date</label>
+                                      <input type="date" class="form-control"  name="PEDT" [(ngModel)]=PEDT>
+                                  </div>
+                                <button [disabled]="!prodform.valid" type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+                            </form>
+                          <!-- <enter-product  (emitHidden)=changeHidden($event)  ></enter-product> -->
+      <!-- </div> -->
+    </div>
+  </div>

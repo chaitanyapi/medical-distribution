@@ -1,0 +1,4 @@
+
+<ul class="nav nav-pills nav-stacked" *ngIf="showList">
+  <li (click)="onSelect(vid)" *ngFor="let vid of video"><a>{{vid.title}}</a></li>
+</ul>

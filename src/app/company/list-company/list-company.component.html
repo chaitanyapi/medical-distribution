@@ -1,0 +1,44 @@
+
+<div *ngIf="resultLength" >
+    <h2>The list of Companies</h2>
+    <!-- <table border="solid" > -->
+        <!-- <ul *ngFor="let comp of companyList" (mouseover)="onSelect(comp)" > -->
+             <!-- <table style="border:1px solid black">
+                <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Edit</th>
+                </tr>
+                 -->
+                    <ul *ngFor="let comp of companyList"  >
+                        <!-- <tr>
+                             <tr><td> 
+                                <td>  -->
+                                    
+                                        {{comp.COMPANYTYPE}}
+                                <!-- </td>
+                                <td> -->
+                                        {{comp.COMPANYNAME}}
+                                <!-- </td>
+                                <td> -->
+                                <button type="button" class="btn btn-primary" (click)=routeUpdate(comp._id)>
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                    </button>    
+                                    <button type="button" class="btn btn-danger" (click)=delete(comp._id)>
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                              </button>
+                                <!-- </td>
+
+                        </tr> -->
+
+
+                        </ul>
+            <!-- </table> -->
+
+    <!-- </table> -->
+    <!-- <ngb-pagination [collectionSize]="resultLength"  aria-label="Default pagination"></ngb-pagination> -->
+    <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+    </div>
+    <div *ngIf="!resultLength" >
+    <h2>To find the Company details search using above search box</h2>
+    </div>

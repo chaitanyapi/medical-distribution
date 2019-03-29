@@ -1,0 +1,747 @@
+<div class="jumbotron text-center" *ngIf="!showForm">
+    <h2>Purchase Invoice succesfully stored in database. <br> Reference Invoice Number for this : {{refInvoince}}</h2>
+    <button type="button" class="btn btn-primary btn-sm" (click)="changeshowForm()">OK</button>
+</div>
+
+<div class="container" *ngIf="resultSet" >
+    <button type="button" class="btn btn-primary" (click)=showPendingPI()>Refresh</button>
+    <button type="button" class="btn btn-danger" (click)="closePendingSet()">Cancel</button>
+    <br>
+    We have the below identified Purchase Invoice yet to generate PI.
+    <ul *ngFor="let item of resultSet" >
+        <div class="row">
+                    <div class="col-sm-3" style="background:grey; color:aliceblue">
+                        <a (click)="getPIDetails(item.REFINVOICENUMBER)">{{item.REFINVOICENUMBER}}</a> {{item.COMPANYNAME}}
+                    </div>
+        </div>
+    </ul>
+
+</div>
+<div *ngIf="showForm" >
+    <div class="container-fluid" >
+            <div *ngIf="!invalidFullDate" class="alert alert-danger">
+                    {{mssg}}
+                </div>
+        <div class="col-sm-7">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2 style="color:rgb(17, 163, 182)">Purchase Invoice</h2>
+                </div>
+
+            </div>
+            <div *ngIf="!invNumButtonOn" class="alert alert-danger">
+                    {{invoiceNumberMessage}}
+                </div>
+            <form #prodform="ngForm" (ngSubmit)="onSubmit(prodform.value)">
+              <div class="row">
+                <div class="col-sm-1">
+                        <b>Company</b>
+                </div>
+                <div   class="col-sm-2" >
+                        <input [disabled]="!editTitle" #searchCompany (keyup)="onKeyup(searchCompany.value)" type="text" 
+                        [ngbTypeahead]="searchTxt" [resultFormatter]="formatter" class="form-control"
+                        (selectItem)="companyDetail($event)" required name="COMPANYNAME" [ngModel]=COMPANYNAME>
+                </div>
+                <div *ngIf="invNumButtonOn" class="col-sm-1" style="text-align:left">
+                        <b>INV #</b>
+                </div>
+                <div *ngIf="!invNumButtonOn" class="col-sm-1" style="text-align:left;color:red">
+                        <b>INV #</b>
+                </div>
+                <div class="col-sm-2" style="text-align:left">
+                        <!-- <input [disabled]="!editTitle"  type="number" pattern="^[1-9]*$"  required class="form-control" name="INVOICENUMBER" [ngModel]=INVOICENUMBER> -->
+                        <input [disabled]="!editTitle" #invNum type="text" pattern="^[1-9a-zA-z][1-9a-zA-z/-]*[1-9a-zA-z]$"  
+                        (keyup)="checkInvConstraint(searchCompany.value, invNum.value)"
+                        required class="form-control" name="INVOICENUMBER" [ngModel]=INVOICENUMBER>
+                </div>
+                <div class="col-sm-1" *ngIf="invalidFullDate">
+                            <b>INVOICE DT</b>
+                </div>
+                <div class="col-sm-1" *ngIf="!invalidFullDate" style="color:red" >
+                            <b>INVOICE DT</b>
+                </div>
+                <div   class="col-sm-2" >
+                            <input [disabled]="!editTitle" type="text" required class="form-control" #invDate name="INVOICEDATE" 
+                            (keyup)=validateDate(invDate.value,1) placeholder="dd/mm/yyyy" [ngModel]=INVOICEDATE minlength="6" maxlength="8">
+
+                </div>
+              </div> <br>
+              <div class="row">
+                <div class="col-sm-1" >
+                        <b>Credit</b>
+                </div>
+                <div   class="col-sm-2" >
+                        <input [disabled]="!editTitle" type="number"  class="form-control" name="CREDITNOTE" [ngModel]=CREDITNOTE>
+                </div>
+                <div class="col-sm-1" >
+                        <b>Debit</b>
+                </div>
+                <div   class="col-sm-2" >
+                        <input [disabled]="!editTitle" type="number"  class="form-control" name="DEBITNOTE" [ngModel]=DEBITNOTE>
+                </div>
+                <div class="col-sm-2"></div>
+                <div class="col-sm-2">
+                        <button *ngIf="editTitle"  [disabled]="!prodform.valid || !COMPANYCODE || !invNumButtonOn||!invalidFullDate" type="submit" class="btn btn-success">Lock</button>
+                        <button *ngIf="!editTitle"  type="button" class="btn btn-success" (click)="changeEditTitle()">UnLock</button>
+                </div>
+              </div>
+
+            </form>
+        </div>
+        <div class="col-sm-5" style="color: black">
+            <div class="row">
+                    <div class="col-sm-4">
+                        <button *ngIf="showAddProductInvoiceButton"  type="button" class="btn btn-success" (click)="generateProductInvoice(1); prodform.resetForm()">
+                          <span class="glyphicon glyphicon-plus-sign"></span> Generate Invoice
+                        </button>
+                    </div>
+                    <div class="col-sm-4">
+                        <button *ngIf="showAddProductInvoiceButton"  type="button" class="btn btn-primary" (click)="generateProductInvoice(0); prodform.resetForm()">
+                          <span class="glyphicon glyphicon-plus-sign"></span> New PI
+                        </button>
+                    </div>
+                    <div class="col-sm-4">
+                        <button [disabled]="disablePIButton || !pendingPiButton || !resultSet"   type="button" class="btn btn-success" (click)="showPendingPI()">
+                          <span class="glyphicon glyphicon-search"></span> Pending PI
+                        </button>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                        <b>DISCOUNT</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{disc_value}}</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>INV VALUE</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{inv_value}}</b> 
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-sm-3">
+                        <b>TAX VALUE</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{tax_value}}</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>OFFER VAL</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{offer_value}}</b> 
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-sm-3">
+                   <b>Items</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{arrayCount}}</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>NET AMT</b> 
+                </div>
+                <div class="col-sm-3">
+                        <b>{{net_amt}}</b> 
+                </div>
+            </div>
+            <!-- <div class="col-sm-6" style="text-align: right">
+                    <button *ngIf="showAddProductInvoiceButton"  type="button" class="btn btn-success" (click)="generateProductInvoice(); prodform.resetForm()">
+                        <span class="glyphicon glyphicon-plus-sign"></span> Generate Invoice
+                      </button>
+                </div> -->
+        </div>
+    </div>
+
+<br>
+
+<!-- this is the form for enter data -->
+    <div class="container-fluid" *ngIf="!showEditProductForm" >
+            <div *ngIf="invalidDate" class="alert alert-danger">
+                    {{msg}}
+                </div>
+            <form #addProdform="ngForm"  (ngSubmit)="onEnterProductSubmit(addProdform.value); addProdform.resetForm()"> 
+                <div class="row" style="text-align:center">
+                    <div class="col-sm-11">
+                            <div class="row">
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                Product
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input [disabled]="freezeForm" #searchProduct (keyup)="onKeyupProd(searchProduct.value)" type="text" 
+                                                        [ngbTypeahead]="searchProd" [resultFormatter]="formatter" class="form-control"  
+                                                        (selectItem)="productDetail($event)" required name="PRODUCTNAME" ngModel>
+                                        </div>
+                                    </div>
+                                                    
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                PACK
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input type="text" class="form-control" disabled  name="PRODPACK" [(ngModel)]=PRODPACK>
+                                        </div>
+                                    </div>	
+                                    <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    BATCH NO
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input  [disabled]="freezeForm"  type="text" class="form-control" required name="BATCHNUMBER" ngModel>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        QTY
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input  [disabled]="freezeForm"  type="number" #receipt required class="form-control" name="RECEIPT" 
+                                                    (keyup)=caluclateNetFromReceipt(prate.value,receipt.value) [(ngModel)]=RECEIPT>
+                                                </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        FREE
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input  [disabled]="freezeForm"  type="number" class="form-control"  name="FREE" ngModel>
+                                                </div>
+                                        </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                EXP DT <b *ngIf="invalidDate" style="color:red" >*</b>
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="text" class="form-control" required #expdate placeholder="mm/dd"
+                                            (keyup)=validateDate(expdate.value,0) name="EXPIRYDATE" [ngModel]="EXPIRYDATE" minlength="4" maxlength="5" >
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                P.RATE
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" #prate required class="form-control" required name="PRATE" 
+                                            (keyup)=calculateNetFromPrate(prate.value,receipt.value) [(ngModel)]=PRATE>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                RATE
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" class="form-control" name="RATE" [(ngModel)]=RATE>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                M.R.P
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" required name="MRP" class="form-control" [(ngModel)]=MRP>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                SPL RATE
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input [disabled]="freezeForm"  type="number" class="form-control" required name="SRATE" [(ngModel)]=SRATE>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                TAX %
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input type="number" class="form-control" disabled name="TAX" [(ngModel)]=TAX>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                B.PAK
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input type="number" class="form-control" disabled name="BPAK" [(ngModel)]=BPAK>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                Code
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  type="text" class="form-control" disabled required name="PRODUCTCODE" [ngModel]=PRODUCTCODE>
+                                        </div>
+                                    </div>		
+
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                PCN %
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" class="form-control"  name="PCN" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                MFR
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="text" class="form-control"  name="MANUFACTURER" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                OFPN %
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" class="form-control"  name="OFPN" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 form-group">
+                                        <div class="row">
+                                            
+                                                OFPN Remarks
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="text" class="form-control"  name="OFPNREMARKS" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                NRATE
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input  [disabled]="freezeForm" type="number" class="form-control"  name="NRATE" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                        <div class="row">
+                                            
+                                                DISC %
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <input [disabled]="freezeForm"  type="number"  class="form-control" name="DISCOUNT" ngModel>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    NET
+                                                
+                                            </div>
+                                            <div class="row">
+                                                    <input type="number" disabled class="form-control" name="NET" [(ngModel)]=NET>
+                                            </div>
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                            <div class="row">
+                                                
+                                                    Remarks
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input  [disabled]="freezeForm" type="text" class="form-control" name="NOTE" ngModel>
+                                            </div>
+                                    </div>
+                                </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <br>
+                        <div>
+                                <button [disabled]="!addProdform.valid || editTitle || !PRODUCTCODE || invalidDate" type="submit" 
+                                style="border-radius:100%; background:transparent" class="btn btn-success">
+                                <span class="glyphicon glyphicon-saved" style="color:green"></span>
+                            </button>
+                        </div>
+                        <br><br>
+                        <div>
+                                <button [disabled]="editTitle"  type="button" class="btn btn-danger" 
+                                style="border-radius:100%; background:transparent" (click)="addProdform.resetForm(); checkGIButton()">
+                                <span  class="glyphicon glyphicon-refresh" style="color:red"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+<!-- this is the form for edit data -->
+<div class="container-fluid" *ngIf="!showEnterProductForm && showEditProductForm">
+                    <div *ngIf="invalidDate" class="alert alert-danger">
+                        {{msg}}
+                    </div>
+        <form #editProdform="ngForm" (ngSubmit)="onEditProductSubmit(editProdform.value)"> 
+
+                <div class="row" style="text-align:center">
+                        <div class="col-sm-11">
+                                <div class="row">
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    Product
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input #searchProduct (keyup)="onKeyupProd(searchProduct.value)" type="text" 
+                                            [ngbTypeahead]="searchProd" [resultFormatter]="formatter" class="form-control"  
+                                            (selectItem)="productDetail($event)" required name="PRODUCTNAME" [ngModel]=editableObject.PRODUCTNAME>
+                                            </div>
+                                        </div>
+                                                        
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    PACK
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="text" class="form-control" disabled  name="PRODPACK" [ngModel]=editableObject.PRODPACK>
+                                            </div>
+                                        </div>  
+                                                                                <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    BATCH NO
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="text" class="form-control" required name="BATCHNUMBER" [ngModel]=editableObject.BATCHNUMBER>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        QTY
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input type="number" #receipt required class="form-control" name="RECEIPT" 
+                                                    (keyup)=caluclateNetFromReceipt(prate.value,receipt.value) [ngModel]=editableObject.RECEIPT>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        FREE
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input type="number" class="form-control"  name="FREE" [ngModel]=editableObject.FREE>
+                                                </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        EXP DT <b *ngIf="invalidDate" style="color:red" >*</b>
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input  [disabled]="freezeForm" type="text" class="form-control" required #expdate placeholder="mm/yy"
+                                                    (keyup)=validateDate(expdate.value) name="EXPIRYDATE" [ngModel]="editableObject.EXPIRYDATE" minlength="4" maxlength="5" >
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1 form-group">
+                                                    <div class="row">
+                                                        
+                                                            P.RATE
+                                                        
+                                                    </div>
+                                                    <div class="row">
+                                                        <input type="number" #prate class="form-control" name="PRATE" required
+                                                        (keyup)=calculateNetFromPrate(prate.value,receipt.value) [ngModel]=editableObject.PRATE>
+                                                    </div>
+                                                </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    RATE
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control" name="RATE" [ngModel]=editableObject.RATE>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    M.R.P
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" required name="MRP" class="form-control" [ngModel]=editableObject.MRP>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        SPL RATE
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input type="text" class="form-control" required name="SRATE" [ngModel]=editableObject.SRATE>
+                                                </div>
+                                            </div>
+    
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    TAX %
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control" disabled name="TAX" [ngModel]=editableObject.TAX>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    B.PAK
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control" disabled name="BPAK" [ngModel]=editableObject.BPAK>
+                                            </div>
+                                        </div>
+
+    
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-sm-1 form-group">
+                                                    <div class="row">
+                                                        
+                                                            Code
+                                                        
+                                                    </div>
+                                                    <div class="row">
+                                                        <input type="text" class="form-control" disabled  name="PRODUCTCODE" [ngModel]=editableObject.PRODUCTCODE>
+                                                    </div>
+                                                </div>    
+        
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    PCN %
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control"  name="PCN" [ngModel]=editableObject.PCN>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    MFR
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="text" class="form-control"  name="MANUFACTURER" [ngModel]=editableObject.MANUFACTURER>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    OFPN %
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control"  name="OFPN" [ngModel]=editableObject.OFPN>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 form-group">
+                                            <div class="row">
+                                                
+                                                    OFPN Remarks
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="text" class="form-control"  name="OFPNREMARKS" [ngModel]=editableObject.OFPNREMARKS>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    NRATE
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number" class="form-control"  name="NRATE" [ngModel]=editableObject.NRATE>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                            <div class="row">
+                                                
+                                                    DISC %
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <input type="number"  class="form-control" name="DISCOUNT" [ngModel]=editableObject.DISCOUNT>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 form-group">
+                                                <div class="row">
+                                                    
+                                                        NET
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                        <input type="number" disabled class="form-control"  name="NET" [ngModel]=NET>
+                                                </div>
+                                        </div>
+                                        <div class="col-sm-5 form-group">
+                                                <div class="row">
+                                                    
+                                                        Remarks
+                                                    
+                                                </div>
+                                                <div class="row">
+                                                    <input type="text" class="form-control" name="NOTE" [ngModel]=editableObject.NOTE>
+                                                </div>
+                                        </div>
+                                        <div [hidden]=true>
+                                        <input type="number" name="index" [ngModel]=editableObject.index>
+                                        </div>
+                                    </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div>
+                                    <button [disabled]="!editProdform.valid || editTitle || !PRODUCTCODE || invalidDate" type="submit" class="btn btn-success"
+                                            style="border-radius:100%; background:transparent" class="btn btn-success">
+                                            <span class="glyphicon glyphicon-saved" style="color:green"></span>
+                                    </button>
+                            </div>
+<br><br>
+                            <div>
+                                    <button type="button" class="btn btn-danger" (click)="cancelEditProduct()"
+                                    style="border-radius:100%; background:transparent" class="btn btn-success">
+                                    <span class="glyphicon glyphicon-remove" style="color:red"></span>                                        
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+        </form>
+    </div>
+  
+
+    <div *ngIf="showArray" >
+                    <div class="row" style="text-align:center">
+                      <div class="col-sm-2" style="border: 1px solid black">
+                        PRODUCTNAME
+                      </div>
+                      <div class="col-sm-2" style="border: 1px solid black">
+                          BATCH NO
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        EXP-DT
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        Quantity
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        FREE
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        P.RATE
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        RATE
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        DISCOUNT %
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                        NET
+                      </div>
+                      <div class="col-sm-1" style="border: 1px solid black">
+                         Delete
+                      </div>
+                    </div>
+                    <div class="row" *ngFor="let item of arr; let i = index" [attr.data-index]="i">
+                          <div class="col-sm-2" >
+                              <a (click)=editEnteredProduct(arr[i],i)>{{item.PRODUCTNAME}}</a>
+                          </div>
+                          <div class="col-sm-2" >
+                              {{item.BATCHNUMBER}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.EXPIRYDATE}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.RECEIPT}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.FREE}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.PRATE}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.RATE}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.DISCOUNT}}
+                          </div>
+                          <div class="col-sm-1" >
+                            {{item.NET}}
+                          </div>
+                          <div class="col-sm-1" >
+                                <span class="glyphicon glyphicon-remove" style="color:red"
+                                (click)="removeEnteredProduct(i)" ></span>
+                          </div>
+                        </div>
+    </div>
+
+</div>
+
+  
+
+
+
+
+
